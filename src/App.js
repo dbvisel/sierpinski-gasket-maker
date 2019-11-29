@@ -19,9 +19,9 @@ const App = () => {
   const [fill, setFill] = React.useState(0);
 
   const points = [
-    { x: 400, y: 0 },
+    { x: 600, y: 0 },
     { x: 0, y: 800 },
-    { x: 800, y: 800 }
+    { x: 1200, y: 800 }
   ];
   let x = points[0].x;
   let y = points[0].y;
@@ -31,7 +31,7 @@ const App = () => {
   const colors = ["cyan", "magenta", "yellow"];
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(800, 800).parent(canvasParentRef);
+    p5.createCanvas(1200, 800).parent(canvasParentRef);
     p5.background("black");
     const initialColor = p5.color(colors[fill]);
     initialColor.setAlpha(alpha);
