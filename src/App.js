@@ -1,26 +1,82 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components";
+import Sketch from "react-p5";
 
-function App() {
+const AppDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 1);
+  min-height: 100vh;
+  & .sketchcontainer {
+    border: 1px solid rgba(0, 0, 0, 0.25);
+  }
+`;
+
+const App = () => {
+  const [fill, setFill] = React.useState(0);
+
+  const points = [
+    { x: 400, y: 0 },
+    { x: 0, y: 800 },
+    { x: 800, y: 800 }
+  ];
+  let x = points[0].x;
+  let y = points[0].y;
+  const alpha = 128;
+  const strokeWeight = 1;
+
+  const colors = ["cyan", "magenta", "yellow"];
+
+  const setup = (p5, canvasParentRef) => {
+    p5.createCanvas(800, 800).parent(canvasParentRef);
+    p5.background("black");
+    const initialColor = p5.color(colors[fill]);
+    initialColor.setAlpha(alpha);
+    p5.stroke(initialColor);
+    p5.fill(initialColor);
+    p5.strokeWeight(strokeWeight);
+  };
+
+  const draw = p5 => {
+    const randomValue = Math.floor(Math.random() * 3);
+    const newPoint = points[randomValue];
+    const oldX = x;
+    const oldY = y;
+    x = (newPoint.x + x) / 2;
+    y = (newPoint.y + y) / 2;
+    // console.log(x, y);
+    const newColor = p5.color(colors[randomValue]);
+    newColor.setAlpha(alpha);
+    p5.stroke(newColor);
+    p5.fill(newColor);
+    p5.line(oldX, oldY, x, y);
+    // p5.point(x, y);
+    // p5.ellipse(p5.mouseX, p5.mouseY, 80, 80);
+  };
+
+  const reverseColors = p5 => {
+    const newFill = Math.floor(Math.random() * 3);
+    console.log("clicked! ", colors[newFill]);
+    const newColor = p5.color(colors[newFill]);
+    newColor.setAlpha(alpha);
+    p5.stroke(newColor);
+    p5.fill(newColor);
+    setFill(newFill);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppDiv>
+      <Sketch
+        setup={setup}
+        draw={draw}
+        className="sketchcontainer"
+        mouseClicked={reverseColors}
+      />
+    </AppDiv>
   );
-}
+};
 
 export default App;
