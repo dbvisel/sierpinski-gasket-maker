@@ -19,19 +19,24 @@ const App = () => {
   const [fill, setFill] = React.useState(0);
 
   const points = [
-    { x: 600, y: 0 },
-    { x: 0, y: 800 },
-    { x: 1200, y: 800 }
+    { x: 700, y: 100 },
+    { x: 100, y: 800 },
+    { x: 1300, y: 800 }
   ];
   let x = points[0].x;
   let y = points[0].y;
-  const alpha = 128;
-  const strokeWeight = 1;
+  // const alpha = 8;
+  // const strokeWeight = 200;
+
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const alpha = params.get("alpha") || 128;
+  const strokeWeight = params.get("weight") || 1;
 
   const colors = ["cyan", "magenta", "yellow"];
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(1200, 800).parent(canvasParentRef);
+    p5.createCanvas(1400, 1000).parent(canvasParentRef);
     p5.background("black");
     const initialColor = p5.color(colors[fill]);
     initialColor.setAlpha(alpha);
