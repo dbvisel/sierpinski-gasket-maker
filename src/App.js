@@ -32,6 +32,7 @@ const App = () => {
   const params = new URLSearchParams(search);
   const alpha = params.get("alpha") || 128;
   const strokeWeight = params.get("weight") || 1;
+  console.log(params);
 
   const colors = ["cyan", "magenta", "yellow"];
 
