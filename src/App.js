@@ -18,13 +18,11 @@ const AppDiv = styled.div`
 const App = () => {
   const [fill, setFill] = React.useState(0);
 
-  const points = [
-    { x: 700, y: 100 },
-    { x: 100, y: 800 },
-    { x: 1300, y: 800 }
-  ];
-  let x = points[0].x;
-  let y = points[0].y;
+  // const points = [
+  //   { x: 700, y: 100 },
+  //   { x: 100, y: 800 },
+  //   { x: 1300, y: 800 }
+  // ];
   // const alpha = 8;
   // const strokeWeight = 200;
 
@@ -32,9 +30,25 @@ const App = () => {
   const params = new URLSearchParams(search);
   const alpha = params.get("alpha") || 128;
   const strokeWeight = params.get("weight") || 1;
-  console.log(params);
+  const points = params.get("points")
+    ? [
+        { x: 300, y: 100 },
+        { x: 300, y: 900 },
+        { x: 1100, y: 100 },
+        { x: 1100, y: 900 }
+      ]
+    : [
+        { x: 700, y: 100 },
+        { x: 100, y: 800 },
+        { x: 1300, y: 800 }
+      ];
 
-  const colors = ["cyan", "magenta", "yellow"];
+  const pointsLength = points.length;
+
+  let x = points[0].x;
+  let y = points[0].y;
+
+  const colors = ["purple", "darkblue", "goldenrod", "turquoise"];
 
   const setup = (p5, canvasParentRef) => {
     p5.createCanvas(1400, 1000).parent(canvasParentRef);
@@ -47,7 +61,7 @@ const App = () => {
   };
 
   const draw = p5 => {
-    const randomValue = Math.floor(Math.random() * 3);
+    const randomValue = Math.floor(Math.random() * pointsLength);
     const newPoint = points[randomValue];
     const oldX = x;
     const oldY = y;
@@ -64,7 +78,7 @@ const App = () => {
   };
 
   const reverseColors = p5 => {
-    const newFill = Math.floor(Math.random() * 3);
+    const newFill = Math.floor(Math.random() * pointsLength);
     console.log("clicked! ", colors[newFill]);
     const newColor = p5.color(colors[newFill]);
     newColor.setAlpha(alpha);
