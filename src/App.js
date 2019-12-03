@@ -70,9 +70,15 @@ const NavSection = styled.div`
     text-align: center;
     border: none;
   }
-  & a {
+  & button {
+    background-color: transparent;
+    font-weight: bold;
+    margin-left: auto;
+    font-size: 110%;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border: 1px solid gray;
     color: white;
-    text-decoration: none;
   }
   & div > div {
     background: transparent !important;
@@ -239,7 +245,9 @@ const App = () => {
               value={pointsLength}
               onChange={x => {
                 console.log(`New points: ${x.target.value}`);
-                setPointsLength(x.target.value);
+                setPointsLength(
+                  Math.min(Math.max(parseInt(x.target.value) || 3, 3), 20)
+                );
                 setUpPoints();
               }}
             ></input>
@@ -250,7 +258,9 @@ const App = () => {
               name="rotation"
               type="numeric"
               value={Math.floor((rotation * 180) / Math.PI)}
-              onChange={x => setRotation((x.target.value * Math.PI) / 180)}
+              onChange={x =>
+                setRotation(((parseInt(x.target.value) || 0) * Math.PI) / 180)
+              }
             ></input>
           </label>
           <label>
@@ -268,12 +278,17 @@ const App = () => {
             ></input>
           </label>
           <label>
-            Stroke:{" "}
+            Stroke weight:{" "}
             <input
               name="radius"
               type="numeric"
               value={strokeWeight}
-              onChange={x => setStrokeWeight(x.target.value)}
+              onChange={x =>
+                setStrokeWeight(
+                  Math.max(Math.min(parseInt(x.target.value) || 1, 1000)),
+                  1
+                )
+              }
             ></input>
           </label>
           <label>
@@ -302,15 +317,14 @@ const App = () => {
             ></input>
           </label>
           <label>
-            <a
-              href="/#"
+            <button
               onClick={e => {
                 e.preventDefault();
                 setClear(true);
               }}
             >
               Clear
-            </a>
+            </button>
           </label>
           {points.map((x, index) => (
             <CompactPicker
