@@ -4,54 +4,90 @@ import Sketch from "react-p5";
 
 const AppDiv = styled.div`
   display: flex;
+  position: fixed;
+  left: 0;
+  top: 0;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 1);
-  min-height: 100vh;
+  padding: 5vmin;
   & .sketchcontainer {
     border: 1px solid rgba(0, 0, 0, 0.25);
   }
 `;
 
+const Overlay = styled.div`
+  position: fixed;
+  color: rgba(0, 0, 0, 0.9);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 500px;
+  text-align: center;
+  padding-bottom: 15vh;
+  user-select: none;
+  font-family: "Futura Std", "Futura", "Helvetica Neue";
+`;
+
 const App = () => {
   const [fill, setFill] = React.useState(0);
-
-  // const points = [
-  //   { x: 700, y: 100 },
-  //   { x: 100, y: 800 },
-  //   { x: 1300, y: 800 }
-  // ];
-  // const alpha = 8;
-  // const strokeWeight = 200;
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
   const alpha = params.get("alpha") || 128;
   const strokeWeight = params.get("weight") || 1;
-  const points = params.get("points")
-    ? [
-        { x: 300, y: 100 },
-        { x: 300, y: 900 },
-        { x: 1100, y: 100 },
-        { x: 1100, y: 900 }
-      ]
-    : [
-        { x: 700, y: 100 },
-        { x: 100, y: 800 },
-        { x: 1300, y: 800 }
-      ];
+  const pointsLength = params.get("points") || 3;
+  const r = params.get("radius") || 400;
+  const w = params.get("width") || 1400;
+  const h = params.get("height") || 1000;
+  const rotation = ((params.get("rotation") || 180) / 180) * Math.PI;
+  const xc = w / 2;
+  const yc = h / 2;
+  const points = [];
 
-  const pointsLength = points.length;
+  const getPoint = (xc, yc, r, pointsLength, n) => {
+    return {
+      x: xc + r * Math.sin((n * 2 * Math.PI + rotation) / pointsLength),
+      y: yc + r * Math.cos((n * 2 * Math.PI + rotation) / pointsLength)
+    };
+  };
+
+  for (let n = 0; n < pointsLength; n++) {
+    points[n] = getPoint(xc, yc, r, pointsLength, n);
+  }
 
   let x = points[0].x;
   let y = points[0].y;
 
-  const colors = ["purple", "darkblue", "goldenrod", "turquoise"];
+  const colors = [
+    "purple",
+    "darkblue",
+    "goldenrod",
+    "turquoise",
+    "cyan",
+    "magenta",
+    "limegreen",
+    "yellow",
+    "teal",
+    "red",
+    "purple",
+    "darkblue",
+    "goldenrod",
+    "turquoise",
+    "cyan",
+    "magenta",
+    "limegreen",
+    "yellow",
+    "teal",
+    "red"
+  ];
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(1400, 1000).parent(canvasParentRef);
+    p5.createCanvas(w, h).parent(canvasParentRef);
     p5.background("black");
     const initialColor = p5.color(colors[fill]);
     initialColor.setAlpha(alpha);
@@ -95,6 +131,7 @@ const App = () => {
         className="sketchcontainer"
         mouseClicked={reverseColors}
       />
+      <Overlay>A</Overlay>
     </AppDiv>
   );
 };
