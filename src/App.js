@@ -95,6 +95,8 @@ const App = () => {
   const [lines, setLines] = React.useState(true);
   const [showA, setShowA] = React.useState(true);
   const [clear, setClear] = React.useState(false);
+  const [limit, setLimit] = React.useState(0);
+  const [iterationLimit, setIterationLimit] = React.useState(1000);
   const [colors, setColors] = React.useState([
     "white",
     "#CCCCCC",
@@ -172,12 +174,13 @@ const App = () => {
 
   const draw = p5 => {
     if (clear) {
+      i = 0;
       p5.clear();
       setClear(false);
     }
     p5.strokeWeight(strokeWeight);
     i++;
-    if (i > 0) {
+    if (!limit || (limit && i < iterationLimit)) {
       const randomValue = Math.floor(Math.random() * pointsLength);
       const newPoint = points[randomValue];
       const oldX = x;
@@ -316,6 +319,35 @@ const App = () => {
               onChange={() => setShowA(!showA)}
             ></input>
           </label>
+          <label>
+            Limit iterations:{" "}
+            <input
+              type="checkbox"
+              checked={limit}
+              onChange={() => {
+                if (limit) {
+                  setLimit(0);
+                } else {
+                  setClear(true);
+                  setLimit(iterationLimit);
+                }
+              }}
+            ></input>
+          </label>
+          {limit ? (
+            <label>
+              Iteration limit:{" "}
+              <input
+                name="iterationlimit"
+                type="numeric"
+                value={iterationLimit}
+                onChange={x => {
+                  setIterationLimit(parseInt(x.target.value) || 0);
+                  setClear(true);
+                }}
+              ></input>
+            </label>
+          ) : null}
           <label>
             <button
               onClick={e => {
