@@ -98,56 +98,135 @@ const NavSection = styled.div`
 `;
 
 const App = () => {
+  const isLocalStorage = typeof Storage !== "undefined";
+
   const search = window.location.search;
   const w = window.innerWidth;
   const h = window.innerHeight;
   const params = new URLSearchParams(search);
 
-  const [lines, setLines] = React.useState(true);
-  const [showA, setShowA] = React.useState(true);
-  const [clear, setClear] = React.useState(false);
-  const [limit, setLimit] = React.useState(0);
-  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
-  const [iterationLimit, setIterationLimit] = React.useState(1000);
-  const [colors, setColors] = React.useState([
-    "white",
-    "#CCCCCC",
-    "#888888",
-    "purple",
-    "darkblue",
-    "goldenrod",
-    "turquoise",
-    "cyan",
-    "magenta",
-    "limegreen",
-    "yellow",
-    "teal",
-    "red",
-    "purple",
-    "darkblue",
-    "goldenrod",
-    "turquoise",
-    "cyan",
-    "magenta",
-    "limegreen",
-    "yellow",
-    "teal",
-    "red"
-  ]);
-  const [radius, setRadius] = React.useState(params.get("radius") || 400);
-  const [strokeWeight, setStrokeWeight] = React.useState(
-    params.get("weight") || 1
+  const [lines, setLines] = React.useState(
+    isLocalStorage && localStorage.getItem("lines")
+      ? Boolean(localStorage.getItem("lines") === "true")
+      : true
   );
-  const [xC, setXC] = React.useState(w / 2);
-  const [yC, setYC] = React.useState(h / 2);
+  const [showA, setShowA] = React.useState(
+    isLocalStorage && localStorage.getItem("showA")
+      ? Boolean(localStorage.getItem("showA") === "true")
+      : true
+  );
+  const [clear, setClear] = React.useState(false);
+  const [limit, setLimit] = React.useState(
+    isLocalStorage && localStorage.getItem("limit")
+      ? Boolean(localStorage.getItem("limit") === "true")
+      : false
+  );
+  const [backgroundColor, setBackgroundColor] = React.useState(
+    isLocalStorage && localStorage.getItem("backgroundColor")
+      ? localStorage.getItem("backgroundColor")
+      : "#000000"
+  );
+  const [iterationLimit, setIterationLimit] = React.useState(
+    isLocalStorage && localStorage.getItem("iterationLimit")
+      ? parseInt(localStorage.getItem("iterationLimit"))
+      : 1000
+  );
+  const [colors, setColors] = React.useState(
+    isLocalStorage && localStorage.getItem("colors")
+      ? JSON.parse(localStorage.getItem("colors"))
+      : [
+          "white",
+          "#CCCCCC",
+          "#888888",
+          "purple",
+          "darkblue",
+          "goldenrod",
+          "turquoise",
+          "cyan",
+          "magenta",
+          "limegreen",
+          "yellow",
+          "teal",
+          "red",
+          "purple",
+          "darkblue",
+          "goldenrod",
+          "turquoise",
+          "cyan",
+          "magenta",
+          "limegreen",
+          "yellow",
+          "teal",
+          "red"
+        ]
+  );
+  const [colorFlag, setColorFlag] = React.useState(false);
+  const [radius, setRadius] = React.useState(
+    isLocalStorage && localStorage.getItem("radius")
+      ? parseInt(localStorage.getItem("radius"))
+      : 400
+  );
+  const [strokeWeight, setStrokeWeight] = React.useState(
+    isLocalStorage && localStorage.getItem("strokeWeight")
+      ? parseInt(localStorage.getItem("strokeWeight"))
+      : 1
+  );
+  const [xC, setXC] = React.useState(
+    isLocalStorage && localStorage.getItem("xC")
+      ? parseFloat(localStorage.getItem("xC"))
+      : w / 2
+  );
+  const [yC, setYC] = React.useState(
+    isLocalStorage && localStorage.getItem("yC")
+      ? parseFloat(localStorage.getItem("yC"))
+      : h / 2
+  );
   const [paused, setPaused] = React.useState(false);
   const [pointsLength, setPointsLength] = React.useState(
     params.get("points") || 3
   );
-  const [alpha, setAlpha] = React.useState(params.get("alpha") || 128);
-  const [rotation, setRotation] = React.useState(
-    ((params.get("rotation") || 180) / 180) * Math.PI
+  const [alpha, setAlpha] = React.useState(
+    isLocalStorage && localStorage.getItem("alpha")
+      ? parseInt(localStorage.getItem("alpha"))
+      : 128
   );
+  const [rotation, setRotation] = React.useState(
+    isLocalStorage && localStorage.getItem("rotation")
+      ? (parseFloat(localStorage.getItem("rotation")) / 180) * Math.PI
+      : Math.PI
+  );
+
+  React.useEffect(() => {
+    if (isLocalStorage) {
+      localStorage.setItem("lines", lines);
+      localStorage.setItem("showA", showA);
+      localStorage.setItem("limit", limit);
+      localStorage.setItem("strokeWeight", strokeWeight);
+      localStorage.setItem("radius", radius);
+      localStorage.setItem("alpha", alpha);
+      localStorage.setItem("xC", xC);
+      localStorage.setItem("yC", yC);
+      localStorage.setItem("rotation", (rotation * 180) / Math.PI);
+      localStorage.setItem("backgroundColor", backgroundColor);
+      localStorage.setItem("iterationLimit", iterationLimit);
+      localStorage.setItem("colors", JSON.stringify(colors));
+    }
+  }, [
+    isLocalStorage,
+    xC,
+    yC,
+    lines,
+    showA,
+    rotation,
+    limit,
+    backgroundColor,
+    iterationLimit,
+    colors,
+    colorFlag,
+    strokeWeight,
+    radius,
+    alpha
+  ]);
 
   const points = [];
   let x = 0;
@@ -399,6 +478,7 @@ const App = () => {
                   const newColors = colors;
                   newColors[index] = y.hex;
                   setColors(newColors);
+                  setColorFlag(!colorFlag);
                 }}
               />
             ))}
