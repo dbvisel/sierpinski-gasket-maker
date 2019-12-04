@@ -12,8 +12,7 @@ const AppDiv = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, 1);
-  padding: 5vmin;
+  background-color: ${props => props.backgroundColor};
   font-family: "Futura Std", "Futura", "Helvetica Neue";
   & .sketchcontainer {
     border: 1px solid rgba(0, 0, 0, 0.25);
@@ -42,11 +41,12 @@ const NavSection = styled.div`
   left: 0;
   top: 5vh;
   max-height: 90vh;
-  overflow-y: scroll;
+  overflow-y: hidden;
   width: 275px;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(32, 32, 32, 0.5);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: white;
   padding: 8px 16px;
   & details {
@@ -57,6 +57,12 @@ const NavSection = styled.div`
       border: none;
       outline: none;
       appearance: none;
+    }
+    & > div {
+      overflow: scroll;
+      box-sizing: border-box;
+      margin: 8px 0 16px 0;
+      height: calc(90vh - 56px);
     }
   }
   & label {
@@ -81,21 +87,27 @@ const NavSection = styled.div`
     color: white;
   }
   & div > div {
+    box-shadow: none !important;
     background: transparent !important;
     & input {
       color: white !important;
+      margin-top: 3px;
+      font-family: "Futura Std", "Futura", "Helvetica Neue";
     }
   }
 `;
 
 const App = () => {
   const search = window.location.search;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
   const params = new URLSearchParams(search);
 
   const [lines, setLines] = React.useState(true);
   const [showA, setShowA] = React.useState(true);
   const [clear, setClear] = React.useState(false);
   const [limit, setLimit] = React.useState(0);
+  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
   const [iterationLimit, setIterationLimit] = React.useState(1000);
   const [colors, setColors] = React.useState([
     "white",
@@ -126,8 +138,9 @@ const App = () => {
   const [strokeWeight, setStrokeWeight] = React.useState(
     params.get("weight") || 1
   );
-  const [w, setW] = React.useState(params.get("width") || 1400);
-  const [h, setH] = React.useState(params.get("height") || 1000);
+  const [xC, setXC] = React.useState(w / 2);
+  const [yC, setYC] = React.useState(h / 2);
+  const [paused, setPaused] = React.useState(false);
   const [pointsLength, setPointsLength] = React.useState(
     params.get("points") || 3
   );
@@ -141,19 +154,16 @@ const App = () => {
   let y = 0;
 
   const setUpPoints = () => {
-    const getPoint = (w, h, radius, pointsLength, n) => {
+    const getPoint = (xC, yC, radius, pointsLength, n) => {
       return {
         color: colors[n],
-        x:
-          w / 2 +
-          radius * Math.sin((n * 2 * Math.PI + rotation) / pointsLength),
-        y:
-          h / 2 + radius * Math.cos((n * 2 * Math.PI + rotation) / pointsLength)
+        x: xC + radius * Math.sin((n * 2 * Math.PI + rotation) / pointsLength),
+        y: yC + radius * Math.cos((n * 2 * Math.PI + rotation) / pointsLength)
       };
     };
 
     for (let n = 0; n < pointsLength; n++) {
-      points[n] = getPoint(w, h, radius, pointsLength, n);
+      points[n] = getPoint(xC, yC, radius, pointsLength, n);
     }
     x = points[0].x;
     y = points[0].y;
@@ -163,7 +173,6 @@ const App = () => {
 
   const setup = (p5, canvasParentRef) => {
     p5.createCanvas(w, h).parent(canvasParentRef);
-    p5.background("black");
     const initialColor = p5.color(colors[0]);
     initialColor.setAlpha(alpha);
     p5.stroke(initialColor);
@@ -180,7 +189,7 @@ const App = () => {
     }
     p5.strokeWeight(strokeWeight);
     i++;
-    if (!limit || (limit && i < iterationLimit)) {
+    if (!paused && (!limit || (limit && i < iterationLimit))) {
       const randomValue = Math.floor(Math.random() * pointsLength);
       const newPoint = points[randomValue];
       const oldX = x;
@@ -208,7 +217,7 @@ const App = () => {
   // };
 
   return (
-    <AppDiv>
+    <AppDiv backgroundColor={backgroundColor}>
       <Sketch
         setup={setup}
         draw={draw}
@@ -219,159 +228,181 @@ const App = () => {
       <NavSection>
         <details>
           <summary>Change settings</summary>
-          <label>
-            Height:{" "}
-            <input
-              name="height"
-              type="numeric"
-              value={h}
-              onChange={x => {
-                setH(x.target.value);
-                // setup();
-              }}
-            ></input>
-          </label>
-          <label>
-            Width:{" "}
-            <input
-              name="height"
-              type="numeric"
-              value={w}
-              onChange={x => setW(x.target.value)}
-            ></input>
-          </label>
-          <label>
-            Points:{" "}
-            <input
-              name="height"
-              type="numeric"
-              value={pointsLength}
-              onChange={x => {
-                console.log(`New points: ${x.target.value}`);
-                setPointsLength(
-                  Math.min(Math.max(parseInt(x.target.value) || 3, 3), 20)
-                );
-                setUpPoints();
-              }}
-            ></input>
-          </label>
-          <label>
-            Rotation:
-            <input
-              name="rotation"
-              type="numeric"
-              value={Math.floor((rotation * 180) / Math.PI)}
-              onChange={x =>
-                setRotation(((parseInt(x.target.value) || 0) * Math.PI) / 180)
-              }
-            ></input>
-          </label>
-          <label>
-            Alpha:{" "}
-            <input
-              name="alpha"
-              type="numeric"
-              value={alpha}
-              onChange={x => {
-                setAlpha(
-                  Math.max(Math.min(parseInt(x.target.value, 10), 255), 0) ||
-                    255
-                );
-              }}
-            ></input>
-          </label>
-          <label>
-            Stroke weight:{" "}
-            <input
-              name="radius"
-              type="numeric"
-              value={strokeWeight}
-              onChange={x =>
-                setStrokeWeight(
-                  Math.max(Math.min(parseInt(x.target.value) || 1, 1000)),
-                  1
-                )
-              }
-            ></input>
-          </label>
-          <label>
-            Radius:
-            <input
-              name="radius"
-              type="numeric"
-              value={radius}
-              onChange={x => setRadius(x.target.value)}
-            ></input>
-          </label>
-          <label>
-            Lines:{" "}
-            <input
-              type="checkbox"
-              checked={lines}
-              onChange={() => setLines(!lines)}
-            ></input>
-          </label>
-          <label>
-            Show A:{" "}
-            <input
-              type="checkbox"
-              checked={showA}
-              onChange={() => setShowA(!showA)}
-            ></input>
-          </label>
-          <label>
-            Limit iterations:{" "}
-            <input
-              type="checkbox"
-              checked={limit}
-              onChange={() => {
-                if (limit) {
-                  setLimit(0);
-                } else {
-                  setClear(true);
-                  setLimit(iterationLimit);
-                }
-              }}
-            ></input>
-          </label>
-          {limit ? (
+          <div>
             <label>
-              Iteration limit:{" "}
+              <span>
+                <em>x</em> center:
+              </span>
               <input
-                name="iterationlimit"
+                name="height"
                 type="numeric"
-                value={iterationLimit}
+                value={xC}
                 onChange={x => {
-                  setIterationLimit(parseInt(x.target.value) || 0);
-                  setClear(true);
+                  setXC(parseFloat(x.target.value) || w / 2);
+                  setUpPoints();
                 }}
               ></input>
             </label>
-          ) : null}
-          <label>
-            <button
-              onClick={e => {
-                e.preventDefault();
-                setClear(true);
-              }}
-            >
-              Clear
-            </button>
-          </label>
-          {points.map((x, index) => (
+            <label>
+              <span>
+                <em>y</em> center:
+              </span>
+              <input
+                name="height"
+                type="numeric"
+                value={yC}
+                onChange={x => {
+                  setYC(parseFloat(x.target.value) || h / 2);
+                  setUpPoints();
+                }}
+              ></input>
+            </label>{" "}
+            <label>
+              Points:{" "}
+              <input
+                name="height"
+                type="numeric"
+                value={pointsLength}
+                onChange={x => {
+                  console.log(`New points: ${x.target.value}`);
+                  setPointsLength(
+                    Math.min(Math.max(parseInt(x.target.value) || 3, 3), 20)
+                  );
+                  setUpPoints();
+                }}
+              ></input>
+            </label>
+            <label>
+              Rotation:
+              <input
+                name="rotation"
+                type="numeric"
+                value={Math.floor((rotation * 180) / Math.PI)}
+                onChange={x =>
+                  setRotation(((parseInt(x.target.value) || 0) * Math.PI) / 180)
+                }
+              ></input>
+            </label>
+            <label>
+              Alpha:{" "}
+              <input
+                name="alpha"
+                type="numeric"
+                value={alpha}
+                onChange={x => {
+                  setAlpha(
+                    Math.max(Math.min(parseInt(x.target.value, 10), 255), 0) ||
+                      255
+                  );
+                }}
+              ></input>
+            </label>
+            <label>
+              Stroke weight:{" "}
+              <input
+                name="radius"
+                type="numeric"
+                value={strokeWeight}
+                onChange={x =>
+                  setStrokeWeight(
+                    Math.max(Math.min(parseInt(x.target.value) || 1, 1000)),
+                    1
+                  )
+                }
+              ></input>
+            </label>
+            <label>
+              Radius:
+              <input
+                name="radius"
+                type="numeric"
+                value={radius}
+                onChange={x => setRadius(x.target.value)}
+              ></input>
+            </label>
+            <label>
+              Lines:{" "}
+              <input
+                type="checkbox"
+                checked={lines}
+                onChange={() => setLines(!lines)}
+              ></input>
+            </label>
+            <label>
+              Show A:{" "}
+              <input
+                type="checkbox"
+                checked={showA}
+                onChange={() => setShowA(!showA)}
+              ></input>
+            </label>
+            <label>
+              Limit iterations:{" "}
+              <input
+                type="checkbox"
+                checked={limit}
+                onChange={() => {
+                  if (limit) {
+                    setLimit(0);
+                  } else {
+                    setClear(true);
+                    setLimit(iterationLimit);
+                  }
+                }}
+              ></input>
+            </label>
+            {limit ? (
+              <label>
+                Iteration limit:{" "}
+                <input
+                  name="iterationlimit"
+                  type="numeric"
+                  value={iterationLimit}
+                  onChange={x => {
+                    setIterationLimit(parseInt(x.target.value) || 0);
+                    setClear(true);
+                  }}
+                ></input>
+              </label>
+            ) : null}
+            <label>
+              Pause:{" "}
+              <input
+                type="checkbox"
+                checked={paused}
+                onChange={() => setPaused(!paused)}
+              ></input>
+            </label>
+            <label>
+              <button
+                onClick={e => {
+                  e.preventDefault();
+                  setClear(true);
+                }}
+              >
+                Clear
+              </button>
+            </label>
+            <label>Background color:</label>
             <CompactPicker
-              color={x.color}
-              key={index}
+              color={backgroundColor}
               onChangeComplete={y => {
-                console.log(x);
-                console.log(y);
-                console.log(index);
-                const newColors = colors;
-                newColors[index] = y.hex;
-                setColors(newColors);
+                setBackgroundColor(y.hex);
               }}
             />
-          ))}
+            <label>Line colors:</label>
+            {points.map((x, index) => (
+              <CompactPicker
+                color={x.color}
+                key={index}
+                onChangeComplete={y => {
+                  const newColors = colors;
+                  newColors[index] = y.hex;
+                  setColors(newColors);
+                }}
+              />
+            ))}
+          </div>
         </details>
       </NavSection>
     </AppDiv>
