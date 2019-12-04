@@ -100,10 +100,10 @@ const NavSection = styled.div`
 const App = () => {
   const isLocalStorage = typeof Storage !== "undefined";
 
-  const search = window.location.search;
+  // const search = window.location.search;
+  // const params = new URLSearchParams(search);
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const params = new URLSearchParams(search);
 
   const [lines, setLines] = React.useState(
     isLocalStorage && localStorage.getItem("lines")
@@ -183,7 +183,9 @@ const App = () => {
   );
   const [paused, setPaused] = React.useState(false);
   const [pointsLength, setPointsLength] = React.useState(
-    params.get("points") || 3
+    isLocalStorage && localStorage.getItem("pointsLength")
+      ? parseInt(localStorage.getItem("pointsLength"))
+      : 3
   );
   const [alpha, setAlpha] = React.useState(
     isLocalStorage && localStorage.getItem("alpha")
@@ -204,6 +206,7 @@ const App = () => {
       localStorage.setItem("strokeWeight", strokeWeight);
       localStorage.setItem("radius", radius);
       localStorage.setItem("alpha", alpha);
+      localStorage.setItem("pointsLength", pointsLength);
       localStorage.setItem("xC", xC);
       localStorage.setItem("yC", yC);
       localStorage.setItem("rotation", (rotation * 180) / Math.PI);
@@ -225,6 +228,7 @@ const App = () => {
     colorFlag,
     strokeWeight,
     radius,
+    pointsLength,
     alpha
   ]);
 
