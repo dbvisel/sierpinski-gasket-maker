@@ -42,7 +42,7 @@ const NavSection = styled.div`
   top: 5vh;
   max-height: 90vh;
   overflow-y: hidden;
-  width: 277px;
+  width: 279px;
   background-color: rgba(32, 32, 32, 0.5);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -53,8 +53,7 @@ const NavSection = styled.div`
     user-select: none;
     appearance: none;
     outline: none;
-    &:focus {
-      border: none;
+    & summary:focus {
       outline: none;
       appearance: none;
     }
@@ -77,22 +76,29 @@ const NavSection = styled.div`
     border: none;
   }
   & button {
-    background-color: transparent;
-    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: rgba(0, 0, 0, 1);
     margin-left: auto;
-    font-size: 110%;
+    font-size: 100%;
     margin-bottom: 8px;
     border-radius: 4px;
-    border: 1px solid gray;
-    color: white;
+    border: none;
+    &:focus {
+      appearance: none;
+      outline: none;
+    }
   }
   & div > div {
     box-shadow: none !important;
     background: transparent !important;
+    & span {
+      font-size: 11px !important;
+    }
     & input {
       color: white !important;
-      margin-top: 3px;
+      /* margin-top: 3px; */
       font-family: "Futura Std", "Futura", "Helvetica Neue";
+      font-size: 11px !important;
     }
   }
 `;
@@ -463,7 +469,7 @@ const App = () => {
                   setClear(true);
                 }}
               >
-                Clear
+                Clear pattern
               </button>
             </label>
             <label>Background color:</label>
