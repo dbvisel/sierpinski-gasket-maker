@@ -42,7 +42,7 @@ const NavSection = styled.div`
   top: 5vh;
   max-height: 90vh;
   overflow-y: hidden;
-  width: 275px;
+  width: 277px;
   background-color: rgba(32, 32, 32, 0.5);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -59,7 +59,7 @@ const NavSection = styled.div`
       appearance: none;
     }
     & > div {
-      overflow: scroll;
+      overflow-y: scroll;
       box-sizing: border-box;
       margin: 8px 0 16px 0;
       height: calc(90vh - 56px);
