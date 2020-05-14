@@ -1,6 +1,6 @@
 # sierpinski gasketeer
 
-This lets you makes variations on Sierpinski gaskets. It uses React-P5 to draw on canvas; the spine of the app is Create React App. Deployed version is at https://sierpinski.netlify.com. It was developed as part of a branding exercise.
+This lets you makes variations on Sierpinski gaskets. It uses React-P5 to draw on canvas; the spine of the app is Create React App. Deployed version is at https://sierpinski-maker.netlify.app. It was developed as part of a branding exercise.
 
 ## To do:
 
