@@ -1,43 +1,43 @@
 {
-	"name": "sierpinski",
-	"version": "0.1.0",
-	"private": true,
-	"dependencies": {
-		"p5": "^0.10.2",
-		"react": "^16.13.1",
-		"react-color": "^2.18.1",
-		"react-dom": "^16.13.1",
-		"react-p5": "^1.3.2",
-		"react-scripts": "^3.4.1",
-		"styled-components": "^4.4.1"
-	},
-	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject"
-	},
-	"eslintConfig": {
-		"extends": [
-			"@edenspiekermann/eslint-config",
-			"@edenspiekermann/eslint-config/rules/prettier",
-			"@edenspiekermann/eslint-config/rules/react",
-			"@edenspiekermann/eslint-config/rules/react-proptypes"
-		]
-	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
-	"devDependencies": {
-		"@edenspiekermann/eslint-config": "^1.0.1"
-	}
+  "name": "sierpinski",
+  "version": "0.1.0",
+  "private": false,
+  "dependencies": {
+    "p5": "^0.10.2",
+    "react": "^16.13.1",
+    "react-color": "^2.18.1",
+    "react-dom": "^16.13.1",
+    "react-p5": "^1.3.2",
+    "react-scripts": "^3.4.1",
+    "styled-components": "^4.4.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@edenspiekermann/eslint-config",
+      "@edenspiekermann/eslint-config/rules/prettier",
+      "@edenspiekermann/eslint-config/rules/react",
+      "@edenspiekermann/eslint-config/rules/react-proptypes"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@edenspiekermann/eslint-config": "^1.0.1"
+  }
 }
